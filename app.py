@@ -210,7 +210,7 @@ if 'simulation_data' in st.session_state and st.session_state['simulation_data']
 
         else:
             fb_time = fullbelief_df['Time'].iloc[0]
-            st.metric("Time to Full Belief", f"{fb_time}")
+            st.metric("Belief Time", f"{fb_time}")
             if not saturated_df.empty:
                 sat_time = saturated_df['Time'].iloc[0]
                 st.metric('Saturation Time', f"{sat_time}")
@@ -229,3 +229,4 @@ if 'simulation_data' in st.session_state and st.session_state['simulation_data']
 
 else:
     st.info("👈 Set parameters and click 'Run Simulation' to start.")
+
