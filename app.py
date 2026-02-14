@@ -16,26 +16,22 @@ st.set_page_config(page_title="BRD Model Explorer", layout="wide")
 def create_gif(G, pos, snapshots):
     filenames = []
     with tempfile.TemporaryDirectory() as temp_dir:
-        # Limit to 60 frames max to keep it fast
         step_size = max(1, len(snapshots) // 60)
 
-        # Progress bar
         progress_text = "Rendering GIF..."
         my_bar = st.progress(0, text=progress_text)
 
         for i, snapshot in enumerate(snapshots[::step_size]):
-            # Create figure
             fig, ax = plt.subplots(figsize=(6, 6))
 
-            # Determine colors
             node_colors = []
             for n in G.nodes():
                 if n in snapshot['believers']:
-                    node_colors.append('#2ca02c')  # Green
+                    node_colors.append('green')
                 elif n in snapshot['disbelievers']:
-                    node_colors.append('#d62728')  # Red
+                    node_colors.append('red')
                 else:
-                    node_colors.append('#cccccc')  # Gray
+                    node_colors.append('gray')
 
             nx.draw(
                 G, pos,
@@ -48,20 +44,16 @@ def create_gif(G, pos, snapshots):
             )
             ax.set_title(f"Timestep: {i * step_size}")
 
-            # Save frame
             filename = os.path.join(temp_dir, f"frame_{i}.png")
             plt.savefig(filename, dpi=80)
             plt.close(fig)
             filenames.append(filename)
 
-            # Update progress
             percent_complete = (i + 1) / len(snapshots[::step_size])
             my_bar.progress(percent_complete, text=progress_text)
 
         my_bar.empty()
 
-        # Build GIF
-        # We create a persistent file in the temp directory
         gif_path = os.path.join(tempfile.gettempdir(), "network_animation.gif")
         with imageio.get_writer(gif_path, mode='I', duration=0.15, loop=0) as writer:
             for filename in filenames:
@@ -70,7 +62,7 @@ def create_gif(G, pos, snapshots):
 
         return gif_path
 
-# Graph generation function
+# Helper: Graph Generation
 
 
 def graph_generator(graph_type, n_nodes):
@@ -126,31 +118,23 @@ if 'G' not in st.session_state:
     st.session_state.pos = None
     st.session_state.simulation_data = None
 
-# --- 2. SIDEBAR INPUTS ---
 graph_type = st.sidebar.selectbox("Graph Type", [
                                   "Watts-Strogatz", "Barabasi-Albert", "Erdos-Renyi", "Random Geometric"])
 n_nodes = st.sidebar.slider("Number of Nodes", 10, 5000, 100)
 p_param = st.sidebar.slider("Adoption Probability (λ)", 0.0, 1.0, 0.5)
 eta_param = st.sidebar.slider("Conversion Probability (η)", 0.0, 1.0, 0.05)
 
-# --- 3. GRAPH GENERATION (The "Engine") ---
-# We regenerate the graph only if the slider or type changes
 if st.session_state.G is None or st.session_state.G.number_of_nodes() != n_nodes:
     st.session_state.G = graph_generator(graph_type, n_nodes)
-    # Note: spring_layout can be slow for 5000 nodes; consider a simpler layout for large N
     st.session_state.pos = nx.spring_layout(st.session_state.G, seed=42)
 
-# Alias for easier use in your existing functions
 G = st.session_state.G
 pos = st.session_state.pos
 
 st.sidebar.markdown("---")
-# --- 4. SENSITIVITY BUTTONS (Now safe because G exists) ---
 if st.sidebar.button("Analyze Size Sensitivity", key="size_sense",
                      help="Varies size while holding λ and η constant at current slider values"):
     with st.spinner("Running simulations..."):
-        # Pass the current values into your function
-        # Use defaults or sliders
         x, y = sensitivity_analysis('size', G, n_nodes, p_param, eta_param)
         st.write("### Belief Time vs. Size)")
         st.line_chart(dict(zip(x, y)))
@@ -172,27 +156,22 @@ if st.sidebar.button("Analyze Eta Sensitivity", key="eta_sense",
 if st.sidebar.button("Clear All Cache"):
     st.cache_data.clear()
 
-# --- 5. RUN SIMULATION LOGIC ---
 is_locked = n_nodes > 750
 generate_gif = st.sidebar.checkbox("Generate GIF (Slower)",
                                    value=False,
                                    disabled=is_locked,
                                    help="Only available with size <= 750")
 
-# The Primary Button
 run_sim = st.sidebar.button("Run Simulation", type="primary")
 
 if run_sim:
     with st.spinner("Running Simulation..."):
-        # 1. Run Model (using G and pos from session state)
         df, snapshots = brdmodel(G, p_param, eta_param)
 
-        # 2. Handle GIF
         gif_path = None
         if generate_gif:
             gif_path = create_gif(G, pos, snapshots)
 
-        # 3. Save to Session State so the display section below can see it
         st.session_state['simulation_data'] = {
             'df': df,
             'gif_path': gif_path,
@@ -241,18 +220,11 @@ if 'simulation_data' in st.session_state and st.session_state['simulation_data']
         with col2:
             st.subheader("Network Evolution")
 
-            # Display the GIF
-            # We assume the file exists at the path stored in session state
             st.image(
                 data['gif_path'],
             )
 
-            # The Replay Button
-            # When clicked, Streamlit reruns the script.
-            # Because we read the file again in st.image above, it usually restarts.
-            # If it doesn't, we can force a cache bust.
             if st.button("Force Rerun"):
-                # This clears the cache for this specific element effectively by forcing a rerun
                 st.rerun()
 
 else:
