@@ -3,4 +3,5 @@ networkx
 matplotlib
 imageio
 pandas
+scipy
 numpy
