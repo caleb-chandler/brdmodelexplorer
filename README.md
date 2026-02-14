@@ -28,18 +28,3 @@ The model categorizes nodes into three distinct compartments:
 * **Sensitivity Analysis**: Automated batch simulations to analyze how "Time to Full Belief" scales with changes in size or probability.
 
 ---
-
-## Installation & Running
-
-1. **Clone the repository**:
-   ```bash
-   git clone <your-repo-url>
-   cd <your-repo-name>
-
-2. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-
-3. **Launch the app**:
-   ```bash
-   streamlit run brdmodel-app.py
