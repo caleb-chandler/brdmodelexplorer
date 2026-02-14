@@ -120,7 +120,7 @@ if 'G' not in st.session_state:
 
 graph_type = st.sidebar.selectbox("Graph Type", [
                                   "Watts-Strogatz", "Barabasi-Albert", "Erdos-Renyi", "Random Geometric"])
-n_nodes = st.sidebar.slider("Number of Nodes", 10, 5000, 100)
+n_nodes = st.sidebar.slider("Number of Nodes", 10, 2500, 100)
 p_param = st.sidebar.slider("Adoption Probability (λ)", 0.0, 1.0, 0.5)
 eta_param = st.sidebar.slider("Conversion Probability (η)", 0.0, 1.0, 0.05)
 
@@ -229,5 +229,6 @@ if 'simulation_data' in st.session_state and st.session_state['simulation_data']
 
 else:
     st.info("👈 Set parameters and click 'Run Simulation' to start.")
+
 
 
