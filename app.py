@@ -41,7 +41,7 @@ def create_gif(G, pos, snapshots):
         for i, snapshot in enumerate(snapshots[::step_size]):
             fig, ax = plt.subplots(figsize=(6, 6))
 
-            # Mmp compartment states to visual colors
+            # map compartment states to colors
             node_colors = []
             for n in G.nodes():
                 if n in snapshot['believers']:
@@ -300,3 +300,4 @@ if 'simulation_data' in st.session_state and st.session_state['simulation_data']
 else:
     # prompt for when app first loads
     st.info("👈 Set parameters and click 'Run Simulation' to start.")
+
