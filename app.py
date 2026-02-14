@@ -45,11 +45,11 @@ def create_gif(G, pos, snapshots):
             node_colors = []
             for n in G.nodes():
                 if n in snapshot['believers']:
-                    node_colors.append('green')
+                    node_colors.append('#2ca02c')
                 elif n in snapshot['disbelievers']:
-                    node_colors.append('red')
+                    node_colors.append('#d62728')
                 else:
-                    node_colors.append('gray')
+                    node_colors.append('#7f7f7f')
 
             # draw graph
             nx.draw(
@@ -300,4 +300,5 @@ if 'simulation_data' in st.session_state and st.session_state['simulation_data']
 else:
     # prompt for when app first loads
     st.info("👈 Set parameters and click 'Run Simulation' to start.")
+
 
