@@ -26,5 +26,3 @@ The model categorizes nodes into three distinct compartments:
 * **Interactive Parameters**: Adjust population size ($N$), Adoption Probability ($\lambda$), and Conversion Probability ($\eta$) via the sidebar.
 * **Visual Evolution**: Real-time generation of animated GIFs to watch the spread across the network (available for $N \le 750$).
 * **Sensitivity Analysis**: Automated batch simulations to analyze how "Time to Full Belief" scales with changes in size or probability.
-
----
