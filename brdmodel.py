@@ -108,6 +108,12 @@ def brdmodel(G_orig, p, eta):  # naming lambda "p" to avoid conflict with lambda
 
         t += 1
 
+        # if the network is frozen, break the loop immediately
+        if len(new_believers) == 0 and (len(disbelievers) == 0 or eta == 0):
+            print(
+                "Steady state reached (no further adoption possible). Ending simulation...")
+            break
+        
         # check termination conditions: if no one is left to convert, stop early
         if len(receivers) == 0 and len(disbelievers) == 0:
             print("Full saturation reached. Ending simulation...")
@@ -116,3 +122,4 @@ def brdmodel(G_orig, p, eta):  # naming lambda "p" to avoid conflict with lambda
             print('Maximum timesteps reached. Ending simulation...')
 
     return pd.DataFrame(history), snapshots
+
